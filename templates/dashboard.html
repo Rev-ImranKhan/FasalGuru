@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — FasalGuru{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Namaste, {{ current_user.name.split()[0] }} Ji! 🙏</h1>
+        <p class="page-sub"><i class="fa-solid fa-location-dot"></i> {{ current_user.state }} &nbsp;•&nbsp; <i class="fa-solid fa-leaf"></i> {{ current_user.crops or 'Mixed Farmer' }}</p>
+    </div>
+    <div class="header-season-badge">
+        <i class="fa-solid fa-sun"></i> {{ season }}
+    </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="stats-grid">
+    <div class="stat-card s-blue">
+        <div class="stat-icon"><i class="fa-solid fa-microscope"></i></div>
+        <div class="stat-info">
+            <div class="stat-num counter" data-target="{{ total }}">0</div>
+            <div class="stat-label">Total Detections</div>
+        </div>
+    </div>
+    <div class="stat-card s-red">
+        <div class="stat-icon"><i class="fa-solid fa-bug"></i></div>
+        <div class="stat-info">
+            <div class="stat-num counter" data-target="{{ diseases }}">0</div>
+            <div class="stat-label">Diseases Found</div>
+        </div>
+    </div>
+    <div class="stat-card s-green">
+        <div class="stat-icon"><i class="fa-solid fa-wheat-awn"></i></div>
+        <div class="stat-info">
+            <div class="stat-num counter" data-target="{{ crops_count }}">0</div>
+            <div class="stat-label">Crops Monitored</div>
+        </div>
+    </div>
+    <div class="stat-card s-gold">
+        <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+        <div class="stat-info">
+            <div class="stat-num counter" data-target="{{ advisories_count }}">0</div>
+            <div class="stat-label">Advisories Read</div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Recent Detections -->
+    <div class="dash-card recent-detections">
+        <div class="dash-card-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Detections</h3>
+            <a href="{{ url_for('history') }}" class="view-all">Sab dekho →</a>
+        </div>
+        {% if recent %}
+        <div class="recent-list">
+            {% for r in recent %}
+            <div class="recent-item sev-{{ r['severity']|lower if r['severity'] else 'mild' }}">
+                <div class="ri-crop">{{ r['crop_type'] or '?' }}</div>
+                <div class="ri-info">
+                    <div class="ri-disease">{{ r['disease_name'] or 'Unknown' }}</div>
+                    <div class="ri-date">{{ r['created_at'][:10] }}</div>
+                </div>
+                <div class="ri-right">
+                    <div class="ri-conf">{{ r['confidence']|int }}%</div>
+                    <div class="ri-sev sev-badge-{{ r['severity']|lower if r['severity'] else 'mild' }}">{{ r['severity'] or 'N/A' }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-camera"></i>
+            <p>Abhi tak koi detection nahi<br>Pehli photo upload karein!</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Column -->
+    <div class="dash-right-col">
+        <!-- Quick Actions -->
+        <div class="dash-card quick-actions">
+            <div class="dash-card-header"><h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3></div>
+            <div class="qa-grid">
+                <a href="{{ url_for('disease_detect') }}" class="qa-btn qa-detect">
+                    <i class="fa-solid fa-microscope"></i><span>Bimari Detect Karo</span>
+                </a>
+                <a href="{{ url_for('mandi_prices') }}" class="qa-btn qa-mandi">
+                    <i class="fa-solid fa-chart-line"></i><span>Mandi Bhav Dekho</span>
+                </a>
+                <a href="{{ url_for('weather_advisory') }}" class="qa-btn qa-weather">
+                    <i class="fa-solid fa-cloud-sun-rain"></i><span>Advisory Lo</span>
+                </a>
+                <a href="{{ url_for('crop_calendar') }}" class="qa-btn qa-cal">
+                    <i class="fa-solid fa-calendar-days"></i><span>Calendar Dekho</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tips Carousel -->
+        <div class="dash-card tips-card">
+            <div class="dash-card-header"><h3><i class="fa-solid fa-lightbulb"></i> Aaj Ki Tip</h3></div>
+            <div class="tips-carousel" id="tipsCarousel">
+                {% for tip in tips %}
+                <div class="tip-slide {% if loop.first %}active{% endif %}">{{ tip }}</div>
+                {% endfor %}
+            </div>
+            <div class="tips-dots" id="tipsDots">
+                {% for tip in tips %}
+                <span class="tip-dot {% if loop.first %}active{% endif %}" onclick="goTip({{ loop.index0 }})"></span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Season Advisory -->
+        <div class="dash-card season-card">
+            <div class="dash-card-header"><h3><i class="fa-solid fa-cloud-sun"></i> Aaj Ka Mausam Sandesh</h3></div>
+            <div class="season-content">
+                <div class="season-icon">🌦️</div>
+                <div>
+                    <strong>{{ season }}</strong>
+                    <p>Is season mein apni fasal ka dhyan rakhein. Pest aur bimari ki regular jaanch karein. Sinchai ka sahi schedule follow karein.</p>
+                    <a href="{{ url_for('weather_advisory') }}" class="season-link">Poori Advisory Lein →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

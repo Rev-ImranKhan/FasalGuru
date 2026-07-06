@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}FasalGuru — Apni Fasal Ka Smart Doctor{% endblock %}
+{% block public_page %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fa-solid fa-leaf"></i> AI-Powered Agri Platform</div>
+        <h1 class="hero-title">Apni Fasal Ka<br><span class="hero-highlight">Smart Doctor</span></h1>
+        <p class="hero-subtitle">Crop disease detection, mandi prices, weather advisory aur fasal calendar — sab kuch ek jagah. Kisan ka digital saathi.</p>
+        <div class="hero-cta">
+            <a href="{{ url_for('register') }}" class="cta-primary"><i class="fa-solid fa-seedling"></i> Abhi Shuru Karein</a>
+            <a href="{{ url_for('login') }}" class="cta-secondary">Login Karein <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-stat-alert">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span class="counter-stat" data-target="90000">0</span> crore rupaye
+            <strong>India ka annual crop disease loss</strong>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-card-float">
+            <div class="float-card c1">
+                <i class="fa-solid fa-microscope"></i>
+                <span>Disease Detected!</span>
+                <small>Confidence: 94%</small>
+            </div>
+            <div class="float-card c2">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Wheat ₹2100/q</span>
+                <small>Delhi Mandi ↑</small>
+            </div>
+            <div class="float-card c3">
+                <i class="fa-solid fa-cloud-sun"></i>
+                <span>Mausam Advisory</span>
+                <small>Kharif Season</small>
+            </div>
+            <div class="big-emoji">🌾</div>
+        </div>
+    </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider">
+    <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#ffffff"/>
+    </svg>
+</div>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="section-label">Kaise Kaam Karta Hai</div>
+    <h2 class="section-title">3 Aasaan Steps</h2>
+    <div class="steps-grid">
+        <div class="step-card" style="--delay:0s">
+            <div class="step-num">01</div>
+            <div class="step-icon">📸</div>
+            <h3>Photo Lo</h3>
+            <p>Beemar paude ki photo apne phone se kheechen aur upload karein</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card" style="--delay:0.15s">
+            <div class="step-num">02</div>
+            <div class="step-icon">🤖</div>
+            <h3>AI Analyze Kare</h3>
+            <p>Google Gemini AI photo dekh ke bimari pahchaanta hai seconds mein</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card" style="--delay:0.3s">
+            <div class="step-num">03</div>
+            <div class="step-icon">💊</div>
+            <h3>Ilaj Paayein</h3>
+            <p>Organic aur chemical dono treatment options turant milti hain</p>
+        </div>
+    </div>
+</section>
+
+<!-- Supported Crops -->
+<section class="crops-section">
+    <div class="section-label">Supported Crops</div>
+    <h2 class="section-title">Kaunsi Faslein?</h2>
+    <div class="crops-grid">
+        {% set crops_data = [
+            ("🌾","Wheat","Gehu"),("🍚","Rice","Dhan"),("🌿","Cotton","Kapas"),
+            ("🍅","Tomato","Tamatar"),("🥔","Potato","Aalu"),("🎋","Sugarcane","Ganna"),
+            ("🧅","Onion","Pyaaz"),("🌽","Maize","Makka")
+        ] %}
+        {% for emoji, name, hindi in crops_data %}
+        <div class="crop-card">
+            <div class="crop-emoji">{{ emoji }}</div>
+            <div class="crop-name">{{ name }}</div>
+            <div class="crop-hindi">{{ hindi }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features-section">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">FasalGuru Mein Kya Hai?</h2>
+    <div class="features-grid">
+        <div class="feature-card feat-detect">
+            <div class="feat-icon"><i class="fa-solid fa-microscope"></i></div>
+            <h3>Bimari Detection</h3>
+            <p>AI se crop disease identify karein — symptoms, cause, aur ilaj turant jaanein. 95%+ accuracy.</p>
+            <div class="feat-tag">AI Vision</div>
+        </div>
+        <div class="feature-card feat-mandi">
+            <div class="feat-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <h3>Mandi Bhav</h3>
+            <p>10 bade mandion ke live prices — Delhi, Mumbai, Pune aur zyada. Sahi waqt par bechein.</p>
+            <div class="feat-tag">Live Data</div>
+        </div>
+        <div class="feature-card feat-weather">
+            <div class="feat-icon"><i class="fa-solid fa-cloud-sun-rain"></i></div>
+            <h3>Mausam Salah</h3>
+            <p>Apne ilake ke hisaab se farming advisory — irrigation, fertilizer, pest alert sab kuch.</p>
+            <div class="feat-tag">AI Advisory</div>
+        </div>
+        <div class="feature-card feat-calendar">
+            <div class="feat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <h3>Fasal Calendar</h3>
+            <p>Sahi fasl sahi waqt par — month-wise planting aur harvesting guide apne region ke liye.</p>
+            <div class="feat-tag">Smart Guide</div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <div class="section-label">Farmer Reviews</div>
+    <h2 class="section-title">Kisan Kya Kehte Hain?</h2>
+    <div class="testimonial-grid">
+        <div class="testimonial-card">
+            <div class="t-avatar">👨‍🌾</div>
+            <div class="t-text">"Mere tomato mein blight tha, 3 din se pata nahi chal raha tha. FasalGuru ne 30 second mein diagnosis de di aur sahi spray batayi. Fasal bach gayi!"</div>
+            <div class="t-author">Ramesh Patidar</div>
+            <div class="t-location">Indore, MP</div>
+            <div class="t-stars">★★★★★</div>
+        </div>
+        <div class="testimonial-card">
+            <div class="t-avatar">👨‍🌾</div>
+            <div class="t-text">"Mandi bhav feature bahut kaam aata hai. Pehle Delhi mandi bhejna tha, ab Lucknow mein better rate mil raha hai. ₹200/q zyada milne lage!"</div>
+            <div class="t-author">Sukhvinder Singh</div>
+            <div class="t-location">Ludhiana, Punjab</div>
+            <div class="t-stars">★★★★★</div>
+        </div>
+        <div class="testimonial-card">
+            <div class="t-avatar">👩‍🌾</div>
+            <div class="t-text">"Hum women farmers ke liye yeh app bahut helpful hai. Hinglish mein advice milti hai, samajh aata hai. Mausam advisory bilkul sahi nikli!"</div>
+            <div class="t-author">Savitri Devi</div>
+            <div class="t-location">Muzaffarpur, Bihar</div>
+            <div class="t-stars">★★★★★</div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Ready Hain? FasalGuru Se Shuru Karein 🌱</h2>
+        <p>Hazaron kisano ne pehle se join kiya hai. Aap kab karenge?</p>
+        <a href="{{ url_for('register') }}" class="cta-btn-big">Free Account Banayein <i class="fa-solid fa-arrow-right"></i></a>
+        <div class="cta-note">Demo ke liye: rahul@demo.com / demo123</div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand">
+            <i class="fa-solid fa-seedling"></i> FasalGuru
+            <p>India ke kisano ka digital saathi</p>
+        </div>
+        <div class="footer-links">
+            <span>Made with ❤️ for Indian Farmers</span>
+            <span>•</span>
+            <span>© 2025 FasalGuru</span>
+        </div>
+    </div>
+</footer>
+
+{% endblock %}

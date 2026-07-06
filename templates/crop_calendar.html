@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Fasal Calendar — FasalGuru{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fa-solid fa-calendar-days"></i> Fasal Calendar</h1>
+        <p class="page-sub">Month-wise planting, harvesting, aur preparation guide apne region ke liye</p>
+    </div>
+</div>
+
+<!-- Region Filter -->
+<div class="region-filter">
+    {% set regions = [('north','🌾 North India'),('south','🌴 South India'),('east','🌿 East India'),('west','🏜️ West India'),('central','🌻 Central India')] %}
+    {% for key, label in regions %}
+    <a href="?region={{ key }}" class="region-btn {% if region == key %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+</div>
+
+<!-- Legend -->
+<div class="cal-legend">
+    <span class="leg-item leg-plant"><span class="leg-dot"></span>Baayi (Planting)</span>
+    <span class="leg-item leg-harvest"><span class="leg-dot"></span>Katai (Harvesting)</span>
+    <span class="leg-item leg-prepare"><span class="leg-dot"></span>Tayyaari (Preparation)</span>
+</div>
+
+{% set month_names = ['','January','February','March','April','May','June','July','August','September','October','November','December'] %}
+{% set month_hindi = ['','January (Posh)','February (Magh)','March (Phagun)','April (Chaitra)','May (Vaishakh)','June (Jyeshtha)','July (Ashadh)','August (Shravan)','September (Bhadra)','October (Ashwin)','November (Kartik)','December (Aghan)'] %}
+
+<div class="calendar-grid">
+    {% for month_num in range(1, 13) %}
+    {% set month_data = calendar[month_num] %}
+    {% set reg_data = month_data[region] %}
+    <div class="cal-card {% if month_num == current_month %}current-month{% endif %}">
+        <div class="cal-month-header">
+            <div class="cal-month-name">{{ month_hindi[month_num] }}</div>
+            {% if month_num == current_month %}
+            <div class="current-badge">Abhi!</div>
+            {% endif %}
+        </div>
+
+        {% if reg_data.plant %}
+        <div class="cal-section plant-section">
+            <div class="cal-sec-label"><i class="fa-solid fa-seedling"></i> Baayi</div>
+            <div class="cal-items">
+                {% for item in reg_data.plant %}
+                <span class="cal-tag plant-tag">{{ item }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if reg_data.harvest %}
+        <div class="cal-section harvest-section">
+            <div class="cal-sec-label"><i class="fa-solid fa-wheat-awn"></i> Katai</div>
+            <div class="cal-items">
+                {% for item in reg_data.harvest %}
+                <span class="cal-tag harvest-tag">{{ item }}</span>
+                {% endfor %}
+                {% if not reg_data.harvest %}
+                <span class="no-activity">—</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if reg_data.prepare %}
+        <div class="cal-section prepare-section">
+            <div class="cal-sec-label"><i class="fa-solid fa-wrench"></i> Tayyaari</div>
+            <div class="cal-items">
+                {% for item in reg_data.prepare %}
+                <span class="cal-tag prepare-tag">{{ item }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="cal-tip"><i class="fa-solid fa-lightbulb"></i> {{ month_data.tips[:80] }}...</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

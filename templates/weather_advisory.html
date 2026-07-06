@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Mausam Salah — FasalGuru{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fa-solid fa-cloud-sun-rain"></i> Mausam-Based Farm Advisory</h1>
+        <p class="page-sub">Apne ilake ka naam daalo — AI aapke liye personalized farm advisory tayyar karega</p>
+    </div>
+    <div class="header-badge blue-badge">{{ season }}</div>
+</div>
+
+<div class="advisory-layout">
+    <!-- Input Form -->
+    <div class="advisory-form-card">
+        <h3><i class="fa-solid fa-location-dot"></i> Apna Ilaka Daalo</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label>Sheher / Zila ka Naam</label>
+                <input type="text" name="city" placeholder="Jaise: Lucknow, Nashik, Amritsar..."
+                       value="{{ city }}" required class="city-input">
+            </div>
+            <div class="ai-generate-btn-wrap">
+                <button type="submit" class="ai-generate-btn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Advisory Generate Karo
+                </button>
+            </div>
+        </form>
+        <div class="advisory-info-box">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+                <strong>AI kya cover karta hai:</strong>
+                <ul>
+                    <li>Mausam ka fasl par asar</li>
+                    <li>Sinchai ki schedule</li>
+                    <li>Khad dene ka sahi waqt</li>
+                    <li>Keede-bimari ka alert</li>
+                    <li>Katai ki tayyari</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advisory Result -->
+    <div class="advisory-result-area">
+        {% if advisory %}
+        <div class="advisory-result-card">
+            <div class="advisory-result-header">
+                <div>
+                    <h3><i class="fa-solid fa-file-lines"></i> {{ city }} Ki Farm Advisory</h3>
+                    <small>{{ season }} • Abhi Generate Ki Gayi</small>
+                </div>
+                <div class="advisory-actions">
+                    <button onclick="window.print()" class="adv-btn"><i class="fa-solid fa-print"></i> Print</button>
+                    <button onclick="copyAdvisory()" class="adv-btn"><i class="fa-solid fa-copy"></i> Copy</button>
+                </div>
+            </div>
+            <div class="advisory-text" id="advisoryText">{{ advisory }}</div>
+        </div>
+        {% else %}
+        <div class="advisory-placeholder">
+            <div class="adv-placeholder-icon">🌦️</div>
+            <h3>Advisory Yahan Aayegi</h3>
+            <p>Left mein apna sheher ka naam daalo aur generate button dabao</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Past Advisories -->
+{% if past %}
+<div class="past-advisories">
+    <h3 class="section-sub-title"><i class="fa-solid fa-clock-rotate-left"></i> Pehle Ki Advisories</h3>
+    <div class="past-list">
+        {% for p in past %}
+        <div class="past-item">
+            <div class="past-item-icon"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="past-item-info">
+                <div class="past-city">{{ p['city'] }}</div>
+                <div class="past-meta">{{ p['season'] }} &bull; {{ p['created_at'][:10] }}</div>
+            </div>
+            <div class="past-preview">{{ p['advisory_text'][:80] }}...</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script>
+function copyAdvisory() {
+    const text = document.getElementById('advisoryText').innerText;
+    navigator.clipboard.writeText(text).then(() => showToast('Advisory copy ho gayi! 📋'));
+}
+</script>
+{% endblock %}

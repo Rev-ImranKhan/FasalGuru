@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Mandi Bhav — FasalGuru{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fa-solid fa-chart-line"></i> Mandi Bhav Tracker</h1>
+        <p class="page-sub"><i class="fa-solid fa-clock"></i> Aaj 6:00 AM updated &nbsp;•&nbsp; <i class="fa-solid fa-map-marker-alt"></i> 15+ Mandis covered</p>
+    </div>
+    <div class="header-badge gold-badge">₹ Live Prices</div>
+</div>
+
+<!-- Best Mandi Highlights -->
+{% if not crop_filter %}
+<div class="best-mandi-section">
+    <h3 class="section-sub-title"><i class="fa-solid fa-trophy"></i> Aaj Ka Sabse Acha Bhav</h3>
+    <div class="best-mandi-grid">
+        {% for crop, row in best.items() %}
+        {% if loop.index <= 4 %}
+        <div class="best-card">
+            <div class="best-crop">{{ row[2] }}</div>
+            <div class="best-price">₹{{ row[4] }}<small>/q</small></div>
+            <div class="best-mandi-name">{{ row[0] }}</div>
+            <div class="best-state">{{ row[1] }}</div>
+            <div class="best-trend trend-{{ row[8] }}">
+                {% if row[8] == 'up' %}↑ Badhta{% elif row[8] == 'down' %}↓ Girta{% else %}→ Stable{% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Filters -->
+<div class="filter-bar">
+    <form method="GET" class="filter-form">
+        <div class="filter-group">
+            <label><i class="fa-solid fa-wheat-awn"></i> Fasl</label>
+            <select name="crop" onchange="this.form.submit()">
+                <option value="">Sab Faslen</option>
+                {% for c in crops_list %}
+                <option value="{{ c }}" {% if c == crop_filter %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label><i class="fa-solid fa-map"></i> State</label>
+            <select name="state" onchange="this.form.submit()">
+                <option value="">Sab States</option>
+                {% for s in states %}
+                <option value="{{ s }}" {% if s == state_filter %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if crop_filter or state_filter %}
+        <a href="{{ url_for('mandi_prices') }}" class="clear-filter-btn"><i class="fa-solid fa-xmark"></i> Clear</a>
+        {% endif %}
+    </form>
+    <div class="filter-results-count">{{ data|length }} records</div>
+</div>
+
+<!-- Price Table -->
+<div class="mandi-table-card">
+    <div class="table-responsive">
+        <table class="mandi-table">
+            <thead>
+                <tr>
+                    <th>Mandi</th>
+                    <th>State</th>
+                    <th>Fasl</th>
+                    <th>Min Bhav</th>
+                    <th>Max Bhav</th>
+                    <th>Modal Bhav</th>
+                    <th>Unit</th>
+                    <th>Trend</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr class="{% if loop.index % 2 == 0 %}tr-even{% endif %}">
+                    <td class="mandi-name-cell"><i class="fa-solid fa-store"></i> {{ row[0] }}</td>
+                    <td><span class="state-tag">{{ row[1] }}</span></td>
+                    <td class="crop-cell">
+                        {% set em = {"Wheat":"🌾","Rice":"🍚","Cotton":"🌿","Tomato":"🍅","Potato":"🥔","Sugarcane":"🎋","Onion":"🧅","Maize":"🌽","Soybean":"🫘","Grapes":"🍇"} %}
+                        {{ em.get(row[2], '🌱') }} {{ row[2] }}
+                    </td>
+                    <td class="price-cell">₹{{ row[3] }}</td>
+                    <td class="price-cell price-max">₹{{ row[4] }}</td>
+                    <td class="price-cell price-modal"><strong>₹{{ row[5] }}</strong></td>
+                    <td class="unit-cell">{{ row[6] }}</td>
+                    <td>
+                        <span class="trend-badge trend-{{ row[8] }}">
+                            {% if row[8] == 'up' %}↑ Badha{% elif row[8] == 'down' %}↓ Gira{% else %}→ Same{% endif %}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" class="no-data">Koi data nahi mila</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mandi-disclaimer">
+    <i class="fa-solid fa-circle-info"></i> Yeh prices indicative hain. Final rate ke liye apne local mandi se confirm karein.
+</div>
+{% endblock %}

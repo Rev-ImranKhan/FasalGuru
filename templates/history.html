@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Detection History — FasalGuru{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fa-solid fa-clock-rotate-left"></i> Detection History</h1>
+        <p class="page-sub">Aapke sare crop disease detection records</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('export_history') }}" class="export-btn">
+            <i class="fa-solid fa-download"></i> CSV Export
+        </a>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="filter-bar">
+    <form method="GET" class="filter-form">
+        <div class="filter-group">
+            <label><i class="fa-solid fa-wheat-awn"></i> Fasl se filter</label>
+            <select name="crop" onchange="this.form.submit()">
+                <option value="">Sab Faslen</option>
+                {% for c in crops_used %}
+                <option value="{{ c }}" {% if c == crop_filter %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if crop_filter %}
+        <a href="{{ url_for('history') }}" class="clear-filter-btn"><i class="fa-solid fa-xmark"></i> Clear</a>
+        {% endif %}
+    </form>
+    <div class="filter-results-count">{{ records|length }} records</div>
+</div>
+
+{% if records %}
+<div class="history-table-card">
+    <div class="table-responsive">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Tarikh</th>
+                    <th>Fasl</th>
+                    <th>Bimari</th>
+                    <th>Confidence</th>
+                    <th>Severity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td class="date-cell">
+                        <i class="fa-regular fa-calendar"></i>
+                        {{ r['created_at'][:10] }}
+                    </td>
+                    <td class="crop-cell">
+                        {% set em = {"Wheat":"🌾","Rice":"🍚","Cotton":"🌿","Tomato":"🍅","Potato":"🥔","Sugarcane":"🎋","Onion":"🧅","Maize":"🌽"} %}
+                        {{ em.get(r['crop_type'], '🌱') }} {{ r['crop_type'] }}
+                    </td>
+                    <td class="disease-cell">{{ r['disease_name'] }}</td>
+                    <td>
+                        <div class="mini-conf-bar">
+                            <div class="mini-conf-fill {% if r['confidence'] >= 80 %}high{% elif r['confidence'] >= 65 %}mid{% else %}low{% endif %}"
+                                 style="width: {{ r['confidence']|int }}%"></div>
+                        </div>
+                        <span class="conf-text">{{ r['confidence']|int }}%</span>
+                    </td>
+                    <td>
+                        <span class="sev-badge sev-badge-{{ r['severity']|lower if r['severity'] else 'mild' }}">
+                            {{ r['severity'] or 'N/A' }}
+                        </span>
+                    </td>
+                    <td class="action-cell">
+                        <button class="view-btn" onclick='showReport({{ r["treatment"]|tojson }}, "{{ r["crop_type"] }}", "{{ r["disease_name"] }}", {{ r["confidence"]|int }}, "{{ r["severity"] }}")'>
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <form method="POST" action="/delete-detection/{{ r['id'] }}" style="display:inline"
+                              onsubmit="return confirm('Delete karein?')">
+                            <button type="submit" class="del-btn"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="reportModal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">Report</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+{% else %}
+<div class="empty-history">
+    <div class="empty-icon">📋</div>
+    <h3>Abhi tak koi detection nahi!</h3>
+    <p>Pehle crop ki photo upload karein aur AI se detect karaein</p>
+    <a href="{{ url_for('disease_detect') }}" class="go-detect-btn">
+        <i class="fa-solid fa-microscope"></i> Abhi Detect Karein
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}
+{% block extra_js %}
+<script>
+function showReport(treatment, crop, disease, conf, severity) {
+    const t = treatment || {};
+    let html = `
+        <div class="modal-report">
+            <div class="mr-header sev-bg-${(severity||'none').toLowerCase()}">
+                <strong>${disease}</strong> — ${crop}
+                <span class="sev-badge sev-badge-${(severity||'none').toLowerCase()}">${severity}</span>
+            </div>
+            <div class="mr-conf">
+                <span>AI Confidence:</span>
+                <div class="conf-bar-bg">
+                    <div class="conf-bar ${conf>=80?'conf-high':conf>=65?'conf-mid':'conf-low'}" style="width:${conf}%"></div>
+                </div>
+                <span>${conf}%</span>
+            </div>
+    `;
+    if(t.symptoms) html += `<h4>Lakshan</h4><ul>${t.symptoms.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+    if(t.cause) html += `<h4>Karan</h4><p>${t.cause}</p>`;
+    if(t.organic_treatment) html += `<h4>Jaivik Upchar</h4><ol>${t.organic_treatment.map(s=>`<li>${s}</li>`).join('')}</ol>`;
+    if(t.chemical_treatment) html += `<h4>Rasayanik Upchar</h4><ul>${t.chemical_treatment.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+    if(t.prevention_tips) html += `<h4>Bachao ke Upay</h4><ul>${t.prevention_tips.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+    html += `</div>`;
+    document.getElementById('modalTitle').textContent = `${crop} — ${disease}`;
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('reportModal').classList.add('active');
+}
+function closeModal() {
+    document.getElementById('reportModal').classList.remove('active');
+}
+</script>
+{% endblock %}

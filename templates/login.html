@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Login — FasalGuru{% endblock %}
+{% block public_page %}
+<div class="auth-page">
+    <div class="auth-left">
+        <div class="auth-brand">
+            <i class="fa-solid fa-seedling"></i>
+            <h1>FasalGuru</h1>
+            <p>Apni fasal ka smart doctor</p>
+        </div>
+        <div class="auth-feature-list">
+            <div class="af-item"><i class="fa-solid fa-check-circle"></i> AI Crop Disease Detection</div>
+            <div class="af-item"><i class="fa-solid fa-check-circle"></i> Live Mandi Prices</div>
+            <div class="af-item"><i class="fa-solid fa-check-circle"></i> Weather-based Advisory</div>
+            <div class="af-item"><i class="fa-solid fa-check-circle"></i> Smart Crop Calendar</div>
+        </div>
+        <div class="auth-left-crop">🌾</div>
+    </div>
+    <div class="auth-right">
+        <div class="auth-card">
+            <h2>Wapas Aaiye! 👋</h2>
+            <p class="auth-sub">Apne account mein login karein</p>
+            <form method="POST">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" name="email" placeholder="aapka@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <div class="input-eye">
+                        <input type="password" name="password" id="pwdInput" placeholder="Password daalen" required>
+                        <button type="button" onclick="togglePwd('pwdInput',this)"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login Karein
+                </button>
+            </form>
+            <div class="auth-demo-box">
+                <strong>Demo Accounts:</strong>
+                <div class="demo-chips">
+                    <span onclick="fillDemo('rahul@demo.com')">rahul@demo.com</span>
+                    <span onclick="fillDemo('madeen@demo.com')">madeen@demo.com</span>
+                </div>
+                <small>Password: demo123</small>
+            </div>
+            <p class="auth-switch">Account nahi hai? <a href="{{ url_for('register') }}">Register karein</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function fillDemo(email) {
+    document.querySelector('input[name="email"]').value = email;
+    document.querySelector('input[name="password"]').value = 'demo123';
+}
+function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text'; btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; }
+    else { inp.type = 'password'; btn.innerHTML = '<i class="fa-solid fa-eye"></i>'; }
+}
+</script>
+{% endblock %}
