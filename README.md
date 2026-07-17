@@ -1,6 +1,9 @@
 # 🌾 FasalGuru — AI-Powered Crop Health & Farm Advisory Platform
 
 > An applied GenAI solution helping Indian farmers detect crop diseases instantly and make smarter farming decisions — powered by computer vision and generative AI.
+>
+> **🔗 Live Demo:** https://fasalguru-vgs3.onrender.com
+**📂 GitHub:**  https://github.com/Rev-ImranKhan/FasalGuru
 
 ## 🎯 Overview
 
