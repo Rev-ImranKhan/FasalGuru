@@ -504,7 +504,7 @@ If the image is not a plant or crop, return confidence as 0 and disease_name as 
 Be specific to Indian farming conditions and use products available in India."""
 
             response = client.models.generate_content(
-                model='gemini-2.0-flash',
+                model='gemini-2.5-flash',
                 contents=[
                     types.Part.from_bytes(data=img_data, mime_type=mime_type),
                     types.Part.from_text(text=prompt)
@@ -597,7 +597,7 @@ End with an encouraging message for the farmer."""
 
         try:
             response = client.models.generate_content(
-                model='gemini-2.0-flash',
+                model='gemini-2.5-flash',
                 contents=[types.Part.from_text(text=prompt)]
             )
             advisory = response.text
@@ -691,6 +691,7 @@ def export_history():
     response.headers['Content-Type'] = 'text/csv'
     return response
 
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True, port=5000)
